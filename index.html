@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Kathi King</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <div class="logo">Kathi King 👑</div>
+  <div class="nav-links">
+    <a href="#offers">Offers</a>
+    <a href="#menu">Menu</a>
+    <a href="#track">Track Order</a>
+  </div>
+  <div class="nav-right">
+    <button class="cart-btn" onclick="toggleCart()">🛒 Cart <span id="cart-count">0</span></button>
+    <div id="nav-auth"><button class="login-btn" onclick="openAuth()">Login / Sign up</button></div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>Fresh food, fast delivery 🍽️</h1>
+  <p>Multi-cuisine dishes crafted with love — delivered to your doorstep</p>
+  <div class="search-wrap">
+    <div class="search-bar">
+      <input id="s-input" type="text" placeholder="Search dishes or cuisines..." autocomplete="off"
+        oninput="showSug(this.value)"
+        onkeydown="if(event.key==='Enter'){doSearch();hideSug()}"
+        onblur="setTimeout(hideSug,180)"/>
+      <button onclick="doSearch();hideSug()">Search</button>
+    </div>
+    <div class="sug-box" id="sug-box"></div>
+  </div>
+  <div class="hero-badges">
+    <span class="badge">🕐 30 min avg delivery</span>
+    <span class="badge">🍽️ 12+ dishes</span>
+    <span class="badge">⭐ 4.8 rated</span>
+    <span class="badge">🚚 Free delivery over ₹499</span>
+  </div>
+</div>
+
+<!-- Offers -->
+<section id="offers">
+  <h2>Special Offers</h2>
+  <p class="sub">Limited-time deals just for you</p>
+  <div class="offers-grid">
+    <div class="offer-card"><div class="offer-tag">20% OFF</div><h3>Weekend Fiesta</h3><p>20% off on all Indian & Chinese dishes this weekend</p><span class="promo-code">FEAST20</span></div>
+    <div class="offer-card"><div class="offer-tag">FREE</div><h3>Free Delivery</h3><p>No delivery charges on your first 3 orders</p><span class="promo-code">FIRSTFREE</span></div>
+    <div class="offer-card"><div class="offer-tag">BOGO</div><h3>Buy 1 Get 1</h3><p>Buy any main course, get a starter free</p><span class="promo-code">BOGO50</span></div>
+    <div class="offer-card"><div class="offer-tag">₹100 OFF</div><h3>Happy Hours</h3><p>Save ₹100 on orders above ₹599 between 3–5 PM</p><span class="promo-code">HAPPY100</span></div>
+  </div>
+</section>
+
+<!-- Menu -->
+<section id="menu">
+  <h2>Our Menu</h2>
+  <p class="sub">Fresh, flavorful & made to order</p>
+  <div class="cat-tabs">
+    <button class="cat-tab active" onclick="filterMenu('all',this)">All</button>
+    <button class="cat-tab" onclick="filterMenu('indian',this)">Indian</button>
+    <button class="cat-tab" onclick="filterMenu('chinese',this)">Chinese</button>
+    <button class="cat-tab" onclick="filterMenu('italian',this)">Italian</button>
+    <button class="cat-tab" onclick="filterMenu('continental',this)">Continental</button>
+    <button class="cat-tab" onclick="filterMenu('dessert',this)">Desserts</button>
+  </div>
+  <div class="menu-grid" id="menu-grid"></div>
+</section>
+
+<!-- Track -->
+<section id="track">
+  <h2 style="text-align:center">Track Your Order</h2>
+  <p class="sub" style="text-align:center">Real-time status updated by our kitchen</p>
+  <div class="track-box">
+    <p class="track-status" id="t-status">No active order. Place an order to start tracking!</p>
+    <div class="steps">
+      <div class="step"><div class="s-icon" id="si1">📋</div><div class="s-label" id="sl1">Placed</div></div>
+      <div class="step"><div class="s-icon" id="si2">👨‍🍳</div><div class="s-label" id="sl2">Preparing</div></div>
+      <div class="step"><div class="s-icon" id="si3">🛵</div><div class="s-label" id="sl3">On the way</div></div>
+      <div class="step"><div class="s-icon" id="si4">🏠</div><div class="s-label" id="sl4">Delivered</div></div>
+    </div>
+    <p class="track-note">Order status is updated automatically by the restaurant.</p>
+  </div>
+</section>
+
+<footer>© 2025 Kathi King 👑 · All rights reserved · Made with ❤️ in Punjab</footer>
+
+<!-- General Overlay -->
+<div class="overlay" id="overlay" onclick="closeAll()"></div>
+
+<!-- Profile Sidebar -->
+<div class="profile-sidebar" id="profile-sidebar">
+  <div class="ps-head">
+    <button class="ps-close" onclick="closeProfile()">✕</button>
+    <div class="ps-avatar" id="ps-avatar">K</div>
+    <div class="ps-name" id="ps-name">Guest</div>
+    <div class="ps-email" id="ps-email"></div>
+  </div>
+  <div class="ps-body">
+    <div class="ps-stats">
+      <div class="stat-card"><div class="stat-val" id="stat-orders">0</div><div class="stat-label">Total Orders</div></div>
+      <div class="stat-card"><div class="stat-val" id="stat-streak">0🔥</div><div class="stat-label">Day Streak</div></div>
+    </div>
+    <div class="streak-card">
+      <div class="streak-title">📅 This week's order streak</div>
+      <div class="streak-days" id="streak-days"></div>
+    </div>
+    <div class="ps-menu">
+      <button class="ps-item" onclick="closeProfile()"><span>🍽️</span> My Orders</button>
+      <button class="ps-item" onclick="closeProfile()"><span>📍</span> Saved Addresses</button>
+      <button class="ps-item" onclick="closeProfile()"><span>🎁</span> Rewards & Points</button>
+      <button class="ps-item" onclick="closeProfile()"><span>⚙️</span> Account Settings</button>
+      <div class="ps-divider"></div>
+      <button class="ps-item ps-signout" onclick="signOut()"><span>🚪</span> Sign Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- Auth Modal -->
+<div class="modal-wrap" id="auth-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuth()">✕</button>
+    <h2>Welcome to Kathi King 👑</h2>
+    <p>Sign in to track orders & earn rewards</p>
+    <div class="m-tabs">
+      <div class="m-tab active" id="tab-login" onclick="switchTab('login')">Login</div>
+      <div class="m-tab" id="tab-signup" onclick="switchTab('signup')">Sign Up</div>
+    </div>
+    <div id="form-login">
+      <div class="m-field"><label>Email</label><input type="email" id="l-email" placeholder="you@example.com"/></div>
+      <div class="m-field"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••"/></div>
+      <button class="m-btn" onclick="doLogin()">Login</button>
+      <div class="m-switch">Don't have an account? <a onclick="switchTab('signup')">Sign up</a></div>
+    </div>
+    <div id="form-signup" style="display:none">
+      <div class="m-field"><label>Full Name</label><input type="text" id="s-name" placeholder="Rahul Sharma"/></div>
+      <div class="m-field"><label>Email</label><input type="email" id="s-email" placeholder="you@example.com"/></div>
+      <div class="m-field"><label>Password</label><input type="password" id="s-pass" placeholder="••••••••"/></div>
+      <button class="m-btn" onclick="doSignup()">Create Account</button>
+      <div class="m-switch">Already have an account? <a onclick="switchTab('login')">Login</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- Feedback Modal (appears after delivery) -->
+<div class="fb-modal-wrap" id="fb-modal">
+  <div class="fb-modal">
+    <button class="fb-modal-close" onclick="closeFeedback()">✕</button>
+    <h2>🎉 Order Delivered!</h2>
+    <p>Hope you enjoyed your meal! Share your experience.</p>
+    <div class="fb-field"><label>Your Name</label><input type="text" id="fb-name" placeholder="Rahul Sharma"/></div>
+    <div class="fb-field"><label>Dish Ordered</label><input type="text" id="fb-dish" placeholder="e.g. Butter Chicken"/></div>
+    <div class="fb-field">
+      <label>Rate your experience</label>
+      <div class="stars" id="stars">
+        <span class="star" data-v="1">★</span><span class="star" data-v="2">★</span>
+        <span class="star" data-v="3">★</span><span class="star" data-v="4">★</span>
+        <span class="star" data-v="5">★</span>
+      </div>
+    </div>
+    <div class="fb-field"><label>Comments</label><textarea id="fb-comment" placeholder="What did you love? How can we improve?"></textarea></div>
+    <button class="fb-submit" onclick="submitFB()">Submit Feedback</button>
+    <div class="fb-success" id="fb-success">Thank you! Your feedback means a lot 🙏</div>
+  </div>
+</div>
+
+<!-- Cart Overlay -->
+<div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+  <div class="cart-head">
+    <h3>🛒 Your Cart</h3>
+    <button class="close-btn" onclick="toggleCart()">✕</button>
+  </div>
+  <div id="cart-body"></div>
+  <div id="cart-foot" style="display:none">
+    <div class="promo-row">
+      <input id="promo-in" type="text" placeholder="Enter promo code"/>
+      <button onclick="applyPromo()">Apply</button>
+    </div>
+    <div class="cart-total" id="cart-total"></div>
+    <button class="checkout-btn" onclick="checkout()">Proceed to Checkout →</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

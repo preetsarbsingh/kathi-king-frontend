@@ -105,10 +105,33 @@ function loginUser(user){
 
 // LOGOUT
 function signOut(){
+
   currentUser = null;
+
   localStorage.removeItem("kk_user");
+
   updateNavAuth();
+
+  alert("Logged out successfully");
+
 }
+
+function toggleProfileMenu(){
+  document.getElementById('profile-menu').classList.toggle('show');
+}
+
+window.addEventListener('click', function(e){
+
+  const wrapper = document.querySelector('.profile-wrapper');
+
+  if(wrapper && !wrapper.contains(e.target)){
+    const menu = document.getElementById('profile-menu');
+
+    if(menu){
+      menu.classList.remove('show');
+    }
+  }
+});
 
 // RESTORE SESSION
 function restoreUser(){
@@ -124,16 +147,42 @@ function updateNavAuth(){
   const el = document.getElementById('nav-auth');
 
   if(currentUser){
+
     const initials = currentUser.name
       .split(' ')
-      .map(w=>w[0])
+      .map(w => w[0])
       .join('')
       .toUpperCase()
       .slice(0,2);
 
-    el.innerHTML = `<button class="profile-btn">${initials}</button>`;
+    el.innerHTML = `
+      <div class="profile-wrapper">
+
+        <button class="profile-btn" onclick="toggleProfileMenu()">
+          ${initials}
+        </button>
+
+        <div class="profile-menu" id="profile-menu">
+
+          <div class="pm-name">${currentUser.name}</div>
+          <div class="pm-email">${currentUser.email}</div>
+
+          <button class="logout-btn" onclick="signOut()">
+            Logout
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
   } else {
-    el.innerHTML = `<button class="login-btn" onclick="openAuth()">Login / Sign up</button>`;
+
+    el.innerHTML = `
+      <button class="login-btn" onclick="openAuth()">
+        Login / Sign up
+      </button>
+    `;
   }
 }
 

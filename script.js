@@ -1,12 +1,35 @@
 const API_URL = "https://kathi-king-backend.onrender.com";
 
 var dishes = [
-  {id:1,name:"Butter Chicken",cat:"indian",img:"assets/images/butter-chicken.jpg",price:299,rating:"4.7"},
-  {id:2,name:"Paneer Tikka",cat:"indian",img:"assets/images/paneer-tikka.jpeg",price:249,rating:"4.7"},
-  {id:3,name:"Dal Makhani",cat:"indian",img:"assets/images/Dal Makhani.jpeg",price:199,rating:"4.6"},
+  {
+    id:1,
+    name:"Butter Chicken",
+    cat:"indian",
+    img:"assets/images/butter-chicken.jpg",
+    price:299,
+    rating:"4.7"
+  },
+  {
+    id:2,
+    name:"Paneer Tikka",
+    cat:"indian",
+    img:"assets/images/paneer-tikka.jpeg",
+    price:249,
+    rating:"4.7"
+  },
+  {
+    id:3,
+    name:"Dal Makhani",
+    cat:"indian",
+    img:"assets/images/Dal Makhani.jpeg",
+    price:199,
+    rating:"4.6"
+  }
 ];
 
-var cart = {}, promoOn = false, currentUser = null;
+var cart = {};
+var promoOn = false;
+var currentUser = null;
 
 
 // ---------------- AUTH ----------------
@@ -20,26 +43,52 @@ function closeAuth(){
 }
 
 function switchTab(t){
-  document.getElementById('form-login').style.display = t==='login'?'block':'none';
-  document.getElementById('form-signup').style.display = t==='signup'?'block':'none';
+
+  document.getElementById('form-login').style.display =
+    t === 'login' ? 'block' : 'none';
+
+  document.getElementById('form-signup').style.display =
+    t === 'signup' ? 'block' : 'none';
+
 }
 
-// ✅ SIGNUP
+
+// ---------------- SIGNUP ----------------
+
 async function doSignup(){
-  const name = document.getElementById('s-name').value.trim();
-  const email = document.getElementById('s-email').value.trim();
-  const password = document.getElementById('s-pass').value.trim();
+
+  const name =
+    document.getElementById('s-name').value.trim();
+
+  const email =
+    document.getElementById('s-email').value.trim();
+
+  const password =
+    document.getElementById('s-pass').value.trim();
 
   if(!name || !email || !password){
+
     alert("Fill all fields");
     return;
+
   }
 
   try{
+
     const res = await fetch(`${API_URL}/signup`,{
+
       method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({name,email,password})
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+        name,
+        email,
+        password
+      })
+
     });
 
     const data = await res.json();
@@ -47,35 +96,62 @@ async function doSignup(){
     console.log("Signup Response:", data);
 
     if(res.ok){
+
       alert("Signup successful!");
+
       loginUser(data.user);
+
       closeAuth();
-    } else {
+
+    }else{
+
       alert(data.message || "Signup failed");
+
     }
 
   }catch(err){
-    console.error(err);
+
+    console.log(err);
+
     alert("Server error during signup");
+
   }
+
 }
 
 
-// ✅ LOGIN (FIXED)
+// ---------------- LOGIN ----------------
+
 async function doLogin(){
-  const email = document.getElementById('l-email').value.trim();
-  const password = document.getElementById('l-pass').value.trim();
+
+  const email =
+    document.getElementById('l-email').value.trim();
+
+  const password =
+    document.getElementById('l-pass').value.trim();
 
   if(!email || !password){
+
     alert("Fill all fields");
     return;
+
   }
 
   try{
+
     const res = await fetch(`${API_URL}/login`,{
+
       method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({email,password})
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+        email,
+        password
+      })
+
     });
 
     const data = await res.json();
@@ -83,27 +159,43 @@ async function doLogin(){
     console.log("Login Response:", data);
 
     if(res.ok && data.user){
+
       loginUser(data.user);
+
       closeAuth();
-    } else {
+
+    }else{
+
       alert(data.message || "Invalid credentials");
+
     }
 
   }catch(err){
-    console.error(err);
+
+    console.log(err);
+
     alert("Server error during login");
+
   }
+
 }
 
 
-// SAVE USER
+// ---------------- USER SESSION ----------------
+
 function loginUser(user){
+
   currentUser = user;
-  localStorage.setItem("kk_user", JSON.stringify(user));
+
+  localStorage.setItem(
+    "kk_user",
+    JSON.stringify(user)
+  );
+
   updateNavAuth();
+
 }
 
-// LOGOUT
 function signOut(){
 
   currentUser = null;
@@ -116,39 +208,63 @@ function signOut(){
 
 }
 
+function restoreUser(){
+
+  const saved = localStorage.getItem("kk_user");
+
+  if(saved){
+
+    currentUser = JSON.parse(saved);
+
+  }
+
+  updateNavAuth();
+
+}
+
+
+// ---------------- PROFILE MENU ----------------
+
 function toggleProfileMenu(){
-  document.getElementById('profile-menu').classList.toggle('show');
+
+  document
+    .getElementById('profile-menu')
+    .classList
+    .toggle('show');
+
 }
 
 window.addEventListener('click', function(e){
 
-  const wrapper = document.querySelector('.profile-wrapper');
+  const wrapper =
+    document.querySelector('.profile-wrapper');
 
   if(wrapper && !wrapper.contains(e.target)){
-    const menu = document.getElementById('profile-menu');
+
+    const menu =
+      document.getElementById('profile-menu');
 
     if(menu){
+
       menu.classList.remove('show');
+
     }
   }
+
 });
 
-// RESTORE SESSION
-function restoreUser(){
-  const saved = localStorage.getItem("kk_user");
-  if(saved){
-    currentUser = JSON.parse(saved);
-  }
-  updateNavAuth();
-}
 
-// NAVBAR
+// ---------------- NAVBAR ----------------
+
 function updateNavAuth(){
-  const el = document.getElementById('nav-auth');
+
+  const el =
+    document.getElementById('nav-auth');
 
   if(currentUser){
 
-    const initials = currentUser.name
+    const initials =
+      currentUser.name
       .split(' ')
       .map(w => w[0])
       .join('')
@@ -156,82 +272,427 @@ function updateNavAuth(){
       .slice(0,2);
 
     el.innerHTML = `
+
       <div class="profile-wrapper">
 
-        <button class="profile-btn" onclick="toggleProfileMenu()">
+        <button
+          class="profile-btn"
+          onclick="toggleProfileMenu()"
+        >
           ${initials}
         </button>
 
-        <div class="profile-menu" id="profile-menu">
+        <div
+          class="profile-menu"
+          id="profile-menu"
+        >
 
-          <div class="pm-name">${currentUser.name}</div>
-          <div class="pm-email">${currentUser.email}</div>
+          <div class="pm-name">
+            ${currentUser.name}
+          </div>
 
-          <button class="logout-btn" onclick="signOut()">
+          <div class="pm-email">
+            ${currentUser.email}
+          </div>
+
+          <button
+            class="logout-btn"
+            onclick="signOut()"
+          >
             Logout
           </button>
 
         </div>
 
       </div>
+
     `;
 
-  } else {
+  }else{
 
     el.innerHTML = `
-      <button class="login-btn" onclick="openAuth()">
+
+      <button
+        class="login-btn"
+        onclick="openAuth()"
+      >
         Login / Sign up
       </button>
+
     `;
   }
+
 }
 
 
 // ---------------- MENU ----------------
 
 function cap(s){
-  return s.charAt(0).toUpperCase()+s.slice(1);
+
+  return s.charAt(0).toUpperCase() + s.slice(1);
+
 }
 
 function menuCardHTML(d){
+
   return `
-  <div class="menu-card">
-    <div class="menu-img">
-      <img src="${d.img}" alt="${d.name}" style="width:100%;height:100%;object-fit:cover;">
-    </div>
-    <div class="menu-body">
-      <div class="menu-cat">${cap(d.cat)}</div>
-      <div class="menu-name">${d.name}</div>
-      <div class="menu-foot">
-        <span>₹${d.price}</span>
-        <span>★ ${d.rating}</span>
+
+    <div class="menu-card">
+
+      <div class="menu-img">
+
+        <img
+          src="${d.img}"
+          alt="${d.name}"
+          style="
+            width:100%;
+            height:100%;
+            object-fit:cover;
+          "
+        >
+
       </div>
-      <button onclick="addToCart(${d.id})">Add</button>
+
+      <div class="menu-body">
+
+        <div class="menu-cat">
+          ${cap(d.cat)}
+        </div>
+
+        <div class="menu-name">
+          ${d.name}
+        </div>
+
+        <div class="menu-foot">
+
+          <span>
+            ₹${d.price}
+          </span>
+
+          <span>
+            ★ ${d.rating}
+          </span>
+
+        </div>
+
+        <button
+          class="add-btn"
+          onclick="addToCart(${d.id})"
+        >
+          Add to Cart
+        </button>
+
+      </div>
+
     </div>
-  </div>`;
+
+  `;
+
 }
 
 function renderMenu(filter){
-  const list = filter==='all' ? dishes : dishes.filter(d=>d.cat===filter);
-  document.getElementById('menu-grid').innerHTML = list.map(menuCardHTML).join('');
+
+  const list =
+    filter === 'all'
+    ? dishes
+    : dishes.filter(d => d.cat === filter);
+
+  document.getElementById('menu-grid').innerHTML =
+    list.map(menuCardHTML).join('');
+
 }
 
 
 // ---------------- CART ----------------
 
 function addToCart(id){
-  cart[id] = (cart[id]||0)+1;
+
+  cart[id] = (cart[id] || 0) + 1;
+
+  saveCart();
+
   renderCart();
+
+  alert("Item added to cart");
+
+}
+
+function changeQty(id, delta){
+
+  cart[id] += delta;
+
+  if(cart[id] <= 0){
+
+    delete cart[id];
+
+  }
+
+  saveCart();
+
+  renderCart();
+
+}
+
+function saveCart(){
+
+  localStorage.setItem(
+    "kk_cart",
+    JSON.stringify(cart)
+  );
+
+}
+
+function restoreCart(){
+
+  const saved =
+    localStorage.getItem("kk_cart");
+
+  if(saved){
+
+    cart = JSON.parse(saved);
+
+  }
+
 }
 
 function renderCart(){
-  const count = Object.values(cart).reduce((a,b)=>a+b,0);
-  document.getElementById('cart-count').textContent = count;
+
+  const count =
+    Object.values(cart)
+    .reduce((a,b)=>a+b,0);
+
+  document.getElementById('cart-count')
+    .textContent = count;
+
+  const body =
+    document.getElementById('cart-body');
+
+  const foot =
+    document.getElementById('cart-foot');
+
+  const keys = Object.keys(cart);
+
+  if(keys.length === 0){
+
+    body.innerHTML = `
+      <div class="empty-msg">
+        Cart is empty
+      </div>
+    `;
+
+    foot.style.display = "none";
+
+    return;
+
+  }
+
+  foot.style.display = "block";
+
+  let subtotal = 0;
+
+  body.innerHTML = keys.map(id=>{
+
+    const d =
+      dishes.find(x => x.id == id);
+
+    const qty = cart[id];
+
+    const total =
+      d.price * qty;
+
+    subtotal += total;
+
+    return `
+
+      <div class="c-item">
+
+        <div>
+
+          <div class="c-name">
+            ${d.name}
+          </div>
+
+          <div class="qty-row">
+
+            <button
+              onclick="changeQty(${id},-1)"
+            >
+              -
+            </button>
+
+            <span>
+              ${qty}
+            </span>
+
+            <button
+              onclick="changeQty(${id},1)"
+            >
+              +
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="c-price">
+          ₹${total}
+        </div>
+
+      </div>
+
+    `;
+
+  }).join('');
+
+  const delivery =
+    subtotal > 499 ? 0 : 49;
+
+  const finalTotal =
+    subtotal + delivery;
+
+  document.getElementById('cart-total').innerHTML = `
+
+    <div>
+      Subtotal: ₹${subtotal}
+    </div>
+
+    <div>
+      Delivery:
+      ${delivery === 0 ? "Free" : `₹${delivery}`}
+    </div>
+
+    <div>
+      <b>Total: ₹${finalTotal}</b>
+    </div>
+
+  `;
+
 }
 
 
+// ---------------- CHECKOUT ----------------
+
+async function checkout(){
+
+  if(!currentUser){
+
+    alert("Please login first");
+
+    openAuth();
+
+    return;
+
+  }
+
+  const keys = Object.keys(cart);
+
+  if(!keys.length){
+
+    alert("Cart is empty");
+
+    return;
+
+  }
+
+  let items = [];
+  let total = 0;
+
+  keys.forEach(id=>{
+
+    const dish =
+      dishes.find(d => d.id == id);
+
+    const quantity =
+      cart[id];
+
+    total +=
+      dish.price * quantity;
+
+    items.push({
+
+      name:dish.name,
+
+      price:dish.price,
+
+      quantity:quantity
+
+    });
+
+  });
+
+  try{
+
+    const res = await fetch(
+      `${API_URL}/create-order`,
+      {
+
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+          userEmail:currentUser.email,
+
+          userName:currentUser.name,
+
+          items,
+
+          total
+
+        })
+
+      }
+    );
+
+    const data = await res.json();
+
+    console.log(data);
+
+    if(res.ok){
+
+      alert("Order placed successfully 🎉");
+
+      cart = {};
+
+      saveCart();
+
+      renderCart();
+
+    }else{
+
+      alert(data.message || "Order failed");
+
+    }
+
+  }catch(err){
+
+    console.log(err);
+
+    alert("Server error");
+
+  }
+
+}
+
+// ---------------- CART SIDEBAR ----------------
+
+function toggleCart(){
+
+  document
+    .getElementById('cart-sidebar')
+    .classList
+    .toggle('open');
+
+}
 // ---------------- INIT ----------------
 
 renderMenu('all');
-renderCart();
+
 restoreUser();
+
+restoreCart();
+
+renderCart();

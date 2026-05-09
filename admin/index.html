@@ -2,35 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <title>Kathi King Admin</title>
-  <link rel="stylesheet" href="style2.css">
+
+  <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
 
-  <div class="topbar">
-    <h1>Kathi King Admin Panel</h1>
-    <button onclick="loadOrders()">Refresh</button>
-  </div>
+  <h1>Kathi King Admin Panel</h1>
+
+  <button onclick="loadOrders()">Refresh</button>
 
   <div class="stats">
-    <div class="card">
-      <h2 id="total-orders">1</h2>
+    <div>
+      <h2 id="total-orders">0</h2>
       <p>Total Orders</p>
     </div>
 
-    <div class="card">
+    <div>
       <h2 id="total-revenue">₹0</h2>
       <p>Total Revenue</p>
     </div>
   </div>
 
-  <div class="orders-section">
-    <h2>Orders</h2>
+  <h2>Orders</h2>
 
-    <div id="orders-container"></div>
-  </div>
+  <div id="orders-container"></div>
 
   <script src="./script.js"></script>
+
 </body>
 </html>

@@ -799,35 +799,49 @@ async function checkout(){
       },
 
       theme:{
-            color:"#e63946"
+        color:"#e63946"
+      },
+
+      method:{
+        upi:true,
+        card:true
+      },
+
+      config:{
+        display:{
+          blocks:{
+
+            upi:{
+              name:"Pay using UPI",
+              instruments:[
+                {
+                  method:"upi"
+                }
+              ]
+            },
+
+            cards:{
+              name:"Pay using Card",
+              instruments:[
+                {
+                  method:"card"
+                }
+              ]
+            }
+
           },
 
-        method:{
-          upi:true,
-          card:true,
-          netbanking:false,
-          wallet:false,
-          emi:false
-        },
+          sequence:[
+            "block.upi",
+            "block.cards"
+          ],
 
-        config: {
-          display: {
-            blocks: {
-              upi: {
-                name: "Pay via UPI",
-                instruments: [
-                  {
-                    method: "upi"
-                  }
-                ]
-              }
-            },
-            sequence: ["block.upi"],
-            preferences: {
-              show_default_blocks: true
-            }
+          preferences:{
+            show_default_blocks:false
           }
+
         }
+      }
 
     };
 

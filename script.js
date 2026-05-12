@@ -799,8 +799,20 @@ async function checkout(){
       },
 
       theme:{
-        color:"#e63946"
-      }
+            color:"#e63946"
+          },
+
+          method:{
+            upi:true,
+            card:false,
+            netbanking:false,
+            wallet:false,
+            emi:false
+          },
+
+          upi:{
+            flow:"collect"
+          }
 
     };
 

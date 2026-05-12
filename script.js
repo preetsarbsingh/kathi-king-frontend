@@ -638,17 +638,16 @@ function renderCart(){
 async function checkout(){
 
   if(checkoutLoading){
-     return;
-   }
+    return;
+  }
 
   if(!currentUser){
 
-  alert("Please login first");
+    alert("Please login first");
 
-  openAuth();
+    openAuth();
 
-  return;
-
+    return;
   }
 
   const keys = Object.keys(cart);
@@ -658,7 +657,6 @@ async function checkout(){
     alert("Cart is empty");
 
     return;
-
   }
 
   let items = [];
@@ -666,14 +664,11 @@ async function checkout(){
 
   keys.forEach(id=>{
 
-    const dish =
-      dishes.find(d => d.id == id);
+    const dish = dishes.find(d => d.id == id);
 
-    const quantity =
-      cart[id];
+    const quantity = cart[id];
 
-    total +=
-      dish.price * quantity;
+    total += dish.price * quantity;
 
     items.push({
 
@@ -689,21 +684,22 @@ async function checkout(){
 
   checkoutLoading = true;
 
-   const checkoutBtn =
+  const checkoutBtn =
     document.getElementById("checkout-btn");
 
-   if(checkoutBtn){
+  if(checkoutBtn){
 
-     checkoutBtn.disabled = true;
+    checkoutBtn.disabled = true;
 
-     checkoutBtn.innerText = "Placing Order...";
-
+    checkoutBtn.innerText = "Opening Payment...";
   }
 
   try{
 
-    const res = await fetch(
-      `${API_URL}/create-order`,
+    // CREATE PAYMENT ORDER
+
+    const orderRes = await fetch(
+      `${API_URL}/create-payment-order`,
       {
 
         method:"POST",
@@ -713,66 +709,126 @@ async function checkout(){
         },
 
         body:JSON.stringify({
-
-          userEmail:currentUser.email,
-
-          userName:currentUser.name,
-
-          items,
-
           total
-
         })
 
       }
     );
 
-    const data = await res.json();
+    const orderData = await orderRes.json();
 
-    console.log(data);
+    // OPEN RAZORPAY
 
-  if(res.ok){
+    const options = {
 
-    checkoutLoading = false;
+      key:"rzp_test_SoShtULzg0BlHv",
 
-    if(checkoutBtn){
+      amount:orderData.amount,
 
-      checkoutBtn.disabled = false;
+      currency:"INR",
 
-      checkoutBtn.innerText = "Checkout";
+      name:"Kathi King",
 
-    }
+      description:"Food Order Payment",
 
-    alert(
-      "Order placed successfully 🎉\nYour food is being prepared."
-    );
+      order_id:orderData.id,
 
-    cart = {};
+      handler: async function(response){
 
-    saveCart();
+        // SAVE ORDER AFTER SUCCESS
 
-    renderCart();
+        const saveRes = await fetch(
+          `${API_URL}/create-order`,
+          {
 
-  }else{
+            method:"POST",
 
-    checkoutLoading = false;
+            headers:{
+              "Content-Type":"application/json"
+            },
 
-    if(checkoutBtn){
+            body:JSON.stringify({
 
-      checkoutBtn.disabled = false;
+              userEmail:currentUser.email,
 
-      checkoutBtn.innerText = "Checkout";
+              userName:currentUser.name,
 
-    }
+              items,
 
-    alert(data.message || "Order failed");
+              total,
 
-  }
+              paymentId:
+                response.razorpay_payment_id
+
+            })
+
+          }
+        );
+
+        const saveData = await saveRes.json();
+
+        console.log(saveData);
+
+        alert(
+          "Payment Successful 🎉\nOrder placed successfully."
+        );
+
+        cart = {};
+
+        saveCart();
+
+        renderCart();
+
+        checkoutLoading = false;
+
+        if(checkoutBtn){
+
+          checkoutBtn.disabled = false;
+
+          checkoutBtn.innerText = "Checkout";
+        }
+
+      },
+
+      prefill:{
+
+        name:currentUser.name,
+
+        email:currentUser.email
+
+      },
+
+      theme:{
+        color:"#e63946"
+      }
+
+    };
+
+    const rzp = new Razorpay(options);
+
+    rzp.open();
+
+    rzp.on('payment.failed', function () {
+
+      alert("Payment Failed");
+
+      checkoutLoading = false;
+
+      if(checkoutBtn){
+
+        checkoutBtn.disabled = false;
+
+        checkoutBtn.innerText = "Checkout";
+      }
+
+    });
 
   }catch(err){
 
     console.log(err);
 
+    alert("Server error");
+
     checkoutLoading = false;
 
     if(checkoutBtn){
@@ -780,12 +836,11 @@ async function checkout(){
       checkoutBtn.disabled = false;
 
       checkoutBtn.innerText = "Checkout";
-
     }
 
-    alert("Server error");
+  }
 
-  }}
+}
 
 // ---------------- CART SIDEBAR ----------------
 

@@ -802,14 +802,32 @@ async function checkout(){
             color:"#e63946"
           },
 
-          method:{
-            upi:true,
-            card:false,
-            netbanking:false,
-            wallet:false,
-            emi:false
-          },
+        method:{
+          upi:true,
+          card:true,
+          netbanking:false,
+          wallet:false,
+          emi:false
+        },
 
+        config: {
+          display: {
+            blocks: {
+              upi: {
+                name: "Pay via UPI",
+                instruments: [
+                  {
+                    method: "upi"
+                  }
+                ]
+              }
+            },
+            sequence: ["block.upi"],
+            preferences: {
+              show_default_blocks: true
+            }
+          }
+        }
 
     };
 

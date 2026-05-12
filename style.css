@@ -224,3 +224,18 @@ footer{background:#111;color:#888;text-align:center;padding:1.4rem;font-size:.82
 .logout-btn:hover{
   opacity:.9;
 }
+.add-btn{
+
+  transition: all 0.3s ease;
+
+}
+
+.add-btn.added{
+
+  background:#22c55e !important;
+
+  color:white;
+
+  transform:scale(1.05);
+
+}

@@ -159,15 +159,14 @@ async function doLogin(){
     console.log("Login Response:", data);
 
     if(res.ok && data.user){
-
-      loginUser(data.user);
-
-      closeAuth();
-
+       if(!data.user.name || !data.user.email){
+          alert("Invalid user data");
+          return;
+       }
+        loginUser(data.user);
+        closeAuth();
     }else{
-
-      alert(data.message || "Invalid credentials");
-
+     alert(data.message || "Invalid credentials");
     }
 
   }catch(err){
@@ -194,15 +193,27 @@ function loginUser(user){
 
   updateNavAuth();
 
+  restoreCart();
+
 }
 
 function signOut(){
+
+  saveCart();
 
   currentUser = null;
 
   localStorage.removeItem("kk_user");
 
+  const menu = document.getElementById("profile-menu");
+
+  if(menu){
+    menu.classList.remove("show");
+  }
+
   updateNavAuth();
+
+  restoreCart();
 
   alert("Logged out successfully");
 
@@ -210,15 +221,67 @@ function signOut(){
 
 function restoreUser(){
 
-  const saved = localStorage.getItem("kk_user");
+  try{
 
-  if(saved){
+    const saved = localStorage.getItem("kk_user");
 
-    currentUser = JSON.parse(saved);
+    if(saved){
+
+      currentUser = JSON.parse(saved);
+
+    }
+
+  }catch(err){
+
+    console.log(err);
+
+    localStorage.removeItem("kk_user");
 
   }
 
   updateNavAuth();
+
+
+}
+
+function getCartKey(){
+
+  if(currentUser){
+
+    return `kk_cart_${currentUser.email}`;
+
+  }
+
+  return "kk_cart_guest";
+
+}
+
+function saveCart(){
+
+  localStorage.setItem(
+    getCartKey(),
+    JSON.stringify(cart)
+  );
+
+}
+
+function restoreCart(){
+
+  try{
+
+    const saved = localStorage.getItem(getCartKey());
+
+    cart = saved ? JSON.parse(saved) : {};
+
+  }catch(err){
+
+    console.log(err);
+
+    cart = {};
+
+  }
+
+  renderCart();
 
 }
 
@@ -377,6 +440,7 @@ function menuCardHTML(d){
 
         <button
           class="add-btn"
+          id="btn-${d.id}"
           onclick="addToCart(${d.id})"
         >
           Add to Cart
@@ -409,11 +473,28 @@ function addToCart(id){
 
   cart[id] = (cart[id] || 0) + 1;
 
-  saveCart();
-
   renderCart();
 
-  alert("Item added to cart");
+  saveCart();
+
+  const btn =
+    document.getElementById(`btn-${id}`);
+
+  if(btn){
+    
+     btn.classList.add("added");
+
+     btn.innerText = "Added ✓";
+
+     setTimeout(()=>{
+
+     btn.classList.remove("added");
+
+     btn.innerText = "Add to Cart";
+
+    },1500);
+
+  }
 
 }
 
@@ -427,33 +508,13 @@ function changeQty(id, delta){
 
   }
 
-  saveCart();
+  
 
   renderCart();
+  saveCart();
 
 }
 
-function saveCart(){
-
-  localStorage.setItem(
-    "kk_cart",
-    JSON.stringify(cart)
-  );
-
-}
-
-function restoreCart(){
-
-  const saved =
-    localStorage.getItem("kk_cart");
-
-  if(saved){
-
-    cart = JSON.parse(saved);
-
-  }
-
-}
 
 function renderCart(){
 
@@ -572,17 +633,19 @@ function renderCart(){
 
 // ---------------- CHECKOUT ----------------
 
+
+
 async function checkout(){
 
   if(!currentUser){
 
-    alert("Please login first");
+  alert("Please login first");
 
-    openAuth();
+  openAuth();
 
-    return;
+  return;
 
-  }
+}
 
   const keys = Object.keys(cart);
 
@@ -695,4 +758,4 @@ restoreUser();
 
 restoreCart();
 
-renderCart();
+

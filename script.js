@@ -1,5 +1,7 @@
 const API_URL = "https://kathi-king-backend.onrender.com";
 
+var checkoutLoading = false;
+
 var dishes = [
   {
     id:1,
@@ -481,7 +483,7 @@ function addToCart(id){
     document.getElementById(`btn-${id}`);
 
   if(btn){
-    
+
      btn.classList.add("added");
 
      btn.innerText = "Added ✓";
@@ -633,9 +635,11 @@ function renderCart(){
 
 // ---------------- CHECKOUT ----------------
 
-
-
 async function checkout(){
+
+  if(checkoutLoading){
+     return;
+   }
 
   if(!currentUser){
 
@@ -645,7 +649,7 @@ async function checkout(){
 
   return;
 
-}
+  }
 
   const keys = Object.keys(cart);
 
@@ -683,6 +687,19 @@ async function checkout(){
 
   });
 
+  checkoutLoading = true;
+
+   const checkoutBtn =
+    document.getElementById("checkout-btn");
+
+   if(checkoutBtn){
+
+     checkoutBtn.disabled = true;
+
+     checkoutBtn.innerText = "Placing Order...";
+
+  }
+
   try{
 
     const res = await fetch(
@@ -714,31 +731,61 @@ async function checkout(){
 
     console.log(data);
 
-    if(res.ok){
+  if(res.ok){
 
-      alert("Order placed successfully 🎉");
+    checkoutLoading = false;
 
-      cart = {};
+    if(checkoutBtn){
 
-      saveCart();
+      checkoutBtn.disabled = false;
 
-      renderCart();
-
-    }else{
-
-      alert(data.message || "Order failed");
+      checkoutBtn.innerText = "Checkout";
 
     }
+
+    alert(
+      "Order placed successfully 🎉\nYour food is being prepared."
+    );
+
+    cart = {};
+
+    saveCart();
+
+    renderCart();
+
+  }else{
+
+    checkoutLoading = false;
+
+    if(checkoutBtn){
+
+      checkoutBtn.disabled = false;
+
+      checkoutBtn.innerText = "Checkout";
+
+    }
+
+    alert(data.message || "Order failed");
+
+  }
 
   }catch(err){
 
     console.log(err);
 
+    checkoutLoading = false;
+
+    if(checkoutBtn){
+
+      checkoutBtn.disabled = false;
+
+      checkoutBtn.innerText = "Checkout";
+
+    }
+
     alert("Server error");
 
-  }
-
-}
+  }}
 
 // ---------------- CART SIDEBAR ----------------
 

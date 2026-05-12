@@ -24,7 +24,7 @@ var dishes = [
     name:"Dal Makhani",
     cat:"indian",
     img:"assets/images/Dal makhani.jpeg",
-    price:199,
+    price:-48,
     rating:"4.6"
   }
 ];

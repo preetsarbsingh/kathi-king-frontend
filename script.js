@@ -809,37 +809,9 @@ async function checkout(){
 
       config:{
         display:{
-          blocks:{
-
-            upi:{
-              name:"Pay using UPI",
-              instruments:[
-                {
-                  method:"upi"
-                }
-              ]
-            },
-
-            cards:{
-              name:"Pay using Card",
-              instruments:[
-                {
-                  method:"card"
-                }
-              ]
-            }
-
-          },
-
-          sequence:[
-            "block.upi",
-            "block.cards"
-          ],
-
           preferences:{
-            show_default_blocks:false
+            show_default_blocks:true
           }
-
         }
       }
 

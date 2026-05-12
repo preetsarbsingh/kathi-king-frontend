@@ -810,9 +810,6 @@ async function checkout(){
             emi:false
           },
 
-          upi:{
-            flow:"collect"
-          }
 
     };
 
